@@ -1,1 +1,1667 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Interactivo: Liderazgo Organizacional en Entornos VUCA</title>
+    <style>
+        :root {
+            --primary: #1E3A5F;
+            --primary-light: #2c5282;
+            --primary-dark: #0f233d;
+            --bg-body: #f8fafc;
+            --card-bg: #ffffff;
+            --border-color: #cbd5e1;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            
+            /* Paleta Funcional de Estado */
+            --green: #15803d;
+            --green-bg: #f0fdf4;
+            --amber: #b45309;
+            --amber-bg: #fffbeb;
+            --red: #b91c1c;
+            --red-bg: #fef2f2;
+            --purple: #6b21a8;
+            --purple-bg: #faf5ff;
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.7;
+            font-size: 1.05rem;
+            padding-bottom: 60px;
+        }
+
+        /* Top Header */
+        header {
+            background-color: var(--primary);
+            color: #ffffff;
+            padding: 2.25rem 1.75rem 1.75rem 1.75rem;
+            box-shadow: 0 4px 14px rgba(15, 35, 61, 0.2);
+        }
+
+        .header-container {
+            max-width: 1240px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .header-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.25rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            line-height: 1.25;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .badge-tag {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.45rem 1.1rem;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .role-switch-btn {
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            border: 1.5px solid rgba(255,255,255,0.4);
+            padding: 0.45rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .role-switch-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: #ffffff;
+        }
+
+        .header-subtitle {
+            color: #e2e8f0;
+            font-size: 1.1rem;
+            max-width: 950px;
+        }
+
+        /* Sticky Navigation Bar */
+        nav.sticky-nav {
+            position: sticky;
+            top: 0;
+            background: #ffffff;
+            border-bottom: 2px solid var(--border-color);
+            z-index: 1000;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+        }
+
+        .nav-container {
+            max-width: 1240px;
+            margin: 0 auto;
+            display: flex;
+            overflow-x: auto;
+            white-space: nowrap;
+            scrollbar-width: thin;
+        }
+
+        .nav-link {
+            padding: 1.1rem 1.4rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1rem;
+            border-bottom: 4px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            background-color: #f1f5f9;
+        }
+
+        /* Main Content Layout */
+        main {
+            max-width: 1240px;
+            margin: 2.25rem auto;
+            padding: 0 1.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2.75rem;
+        }
+
+        /* Section Formatting */
+        section {
+            scroll-margin-top: 90px;
+        }
+
+        .section-header {
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.25rem;
+            border-bottom: 3px solid var(--border-color);
+            padding-bottom: 0.65rem;
+        }
+
+        .section-title {
+            font-size: 1.55rem;
+            color: var(--primary);
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        /* Color Legend */
+        .color-legend {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            font-size: 0.9rem;
+            font-weight: 700;
+            background: #ffffff;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .dot-green { background-color: var(--green); }
+        .dot-amber { background-color: var(--amber); }
+        .dot-red { background-color: var(--red); }
+        .dot-purple { background-color: var(--purple); }
+
+        /* KPI Grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .kpi-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(16,24,40,.06);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border-left: 6px solid var(--primary);
+            transition: transform 0.2s;
+        }
+
+        .kpi-card:hover { transform: translateY(-2px); }
+
+        .kpi-card.green { border-left-color: var(--green); }
+        .kpi-card.amber { border-left-color: var(--amber); }
+        .kpi-card.red { border-left-color: var(--red); }
+        .kpi-card.purple { border-left-color: var(--purple); }
+
+        .kpi-label {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .kpi-value {
+            font-size: 2.25rem;
+            font-weight: 800;
+            color: var(--primary-dark);
+            margin: 0.4rem 0;
+            line-height: 1.1;
+        }
+
+        .kpi-subtext {
+            font-size: 0.92rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* Generic Card Styling */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 1.75rem;
+            box-shadow: 0 2px 4px rgba(16,24,40,.05);
+            border-left: 6px solid var(--primary);
+            position: relative;
+            font-size: 1.05rem;
+        }
+
+        .card.green { border-left-color: var(--green); }
+        .card.amber { border-left-color: var(--amber); }
+        .card.red { border-left-color: var(--red); }
+        .card.purple { border-left-color: var(--purple); }
+
+        .card-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 0.85rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .badge-pill {
+            padding: 0.35rem 0.75rem;
+            border-radius: 14px;
+            font-size: 0.82rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .pill-green { background: var(--green-bg); color: var(--green); border: 1.5px solid var(--green); }
+        .pill-amber { background: var(--amber-bg); color: var(--amber); border: 1.5px solid var(--amber); }
+        .pill-red { background: var(--red-bg); color: var(--red); border: 1.5px solid var(--red); }
+        .pill-purple { background: var(--purple-bg); color: var(--purple); border: 1.5px solid var(--purple); }
+
+        .teacher-note {
+            display: none;
+            background-color: var(--purple-bg);
+            border: 1.5px dashed var(--purple);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-size: 0.95rem;
+            color: var(--purple);
+        }
+
+        .teacher-note strong {
+            display: block;
+            margin-bottom: 0.3rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        /* Grid Layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* Stepper Visual Timeline */
+        .stepper-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .stepper-item {
+            display: flex;
+            gap: 1.5rem;
+            background: #ffffff;
+            padding: 1.5rem;
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+            border-left: 6px solid var(--purple);
+            box-shadow: 0 2px 4px rgba(16,24,40,.04);
+        }
+
+        .step-number {
+            width: 48px;
+            height: 48px;
+            min-width: 48px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.25rem;
+        }
+
+        .step-content {
+            flex: 1;
+            font-size: 1.05rem;
+        }
+
+        .step-title {
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin-bottom: 0.4rem;
+        }
+
+        details {
+            margin-top: 0.85rem;
+            background: #f1f5f9;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            font-size: 0.98rem;
+        }
+
+        summary {
+            font-weight: 700;
+            cursor: pointer;
+            color: var(--primary-light);
+            outline: none;
+            font-size: 1.02rem;
+        }
+
+        summary:hover, summary:focus-visible { color: var(--primary); }
+
+        .details-body {
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px dashed var(--border-color);
+            color: #1e293b;
+            line-height: 1.65;
+        }
+
+        /* Tables Responsive */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            background: #ffffff;
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 4px rgba(16,24,40,.04);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 1rem;
+        }
+
+        th {
+            background-color: var(--primary);
+            color: #ffffff;
+            font-weight: 700;
+            padding: 1rem 1.15rem;
+            font-size: 1.05rem;
+        }
+
+        td {
+            padding: 1rem 1.15rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        tr:nth-child(even) { background-color: #f8fafc; }
+        tr:hover { background-color: #f1f5f9; }
+
+        /* Filter Controls */
+        .filter-controls {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            background: #ffffff;
+            padding: 1.15rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 240px;
+            padding: 0.7rem 1rem;
+            border: 1.5px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .search-input:focus-visible {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(30,58,95,0.15);
+        }
+
+        .filter-btn {
+            padding: 0.65rem 1.1rem;
+            border-radius: 8px;
+            border: 1.5px solid var(--border-color);
+            background: #ffffff;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn:hover, .filter-btn:focus-visible, .filter-btn.active {
+            background: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+        }
+
+        /* Action Buttons */
+        .btn-action {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-action:hover, .btn-action:focus-visible { background-color: var(--primary-light); }
+
+        .btn-action.secondary {
+            background-color: #ffffff;
+            color: var(--primary);
+            border: 1.5px solid var(--primary);
+        }
+
+        .btn-action.secondary:hover { background-color: #f1f5f9; }
+
+        /* Interactive Scenario Options */
+        .sim-option {
+            display: block;
+            width: 100%;
+            padding: 0.85rem 1.1rem;
+            margin: 0.6rem 0;
+            background: #f8fafc;
+            border: 1.5px solid var(--border-color);
+            border-radius: 10px;
+            text-align: left;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.98rem;
+            color: var(--text-main);
+            transition: all 0.2s ease;
+        }
+
+        .sim-option:hover, .sim-option:focus-visible {
+            background: #f1f5f9;
+            border-color: var(--primary);
+        }
+
+        .sim-feedback {
+            margin-top: 1rem;
+            padding: 1.1rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            display: none;
+            line-height: 1.65;
+        }
+
+        /* Likert Scale Matrix Styling */
+        .matrix-container {
+            background: #ffffff;
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+            padding: 1.75rem;
+            box-shadow: 0 2px 4px rgba(16,24,40,.04);
+        }
+
+        .likert-item {
+            padding: 1.25rem 0;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .likert-item:last-child { border-bottom: none; }
+
+        .likert-text {
+            font-size: 1.05rem;
+            line-height: 1.5;
+        }
+
+        .likert-options {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .likert-btn {
+            flex: 1;
+            min-width: 80px;
+            padding: 0.5rem;
+            border: 1.5px solid var(--border-color);
+            background: #f8fafc;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .likert-btn:hover, .likert-btn:focus-visible {
+            border-color: var(--primary);
+            background: #f1f5f9;
+        }
+
+        .likert-btn.selected {
+            background: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+        }
+
+        .diagnosis-box {
+            margin-top: 1.5rem;
+            padding: 1.25rem;
+            border-radius: 12px;
+            background: #f8fafc;
+            border: 1.5px solid var(--border-color);
+            font-size: 1.05rem;
+        }
+
+        /* Assistant Section */
+        .qa-container {
+            background: #ffffff;
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+            padding: 1.75rem;
+            box-shadow: 0 2px 4px rgba(16,24,40,.04);
+            border-left: 6px solid var(--purple);
+        }
+
+        .qa-toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.85rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 1rem;
+        }
+
+        .switch-label {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .ai-key-box {
+            display: none;
+            background: var(--purple-bg);
+            border: 1.5px solid var(--purple);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1.25rem;
+            font-size: 0.95rem;
+        }
+
+        .ai-key-box input {
+            width: 100%;
+            padding: 0.6rem;
+            margin-top: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+
+        .qa-response-box {
+            margin-top: 1.25rem;
+            padding: 1.25rem;
+            background: #f8fafc;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            min-height: 90px;
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+
+        .chart-box {
+            background: #ffffff;
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(16,24,40,.04);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 640px) {
+            body { font-size: 1rem; }
+            h1 { font-size: 1.5rem; }
+            .section-title { font-size: 1.3rem; }
+            .header-title-row { flex-direction: column; align-items: flex-start; }
+            .stepper-item { flex-direction: column; gap: 0.85rem; }
+            .color-legend { width: 100%; justify-content: space-between; }
+            .likert-options { flex-direction: column; align-items: stretch; }
+            
+            /* Table Transformation */
+            .responsive-table table, 
+            .responsive-table thead, 
+            .responsive-table tbody, 
+            .responsive-table th, 
+            .responsive-table td, 
+            .responsive-table tr { display: block; }
+            .responsive-table thead tr { position: absolute; top: -9999px; left: -9999px; }
+            .responsive-table tr {
+                border: 1.5px solid var(--border-color);
+                border-radius: 12px;
+                margin-bottom: 1rem;
+                background: #ffffff;
+                padding: 0.75rem;
+            }
+            .responsive-table td { 
+                border: none;
+                border-bottom: 1px solid #f1f5f9; 
+                position: relative;
+                padding-left: 48%; 
+                text-align: right;
+                font-size: 0.95rem;
+            }
+            .responsive-table td:last-child { border-bottom: none; }
+            .responsive-table td:before { 
+                position: absolute;
+                top: 0.9rem;
+                left: 0.9rem;
+                width: 42%; 
+                white-space: nowrap;
+                text-align: left;
+                font-weight: 700;
+                color: var(--primary);
+                content: attr(data-label);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Section -->
+    <header>
+        <div class="header-container">
+            <div class="header-title-row">
+                <h1>Dashboard de Análisis: Liderazgo Organizacional en Entornos VUCA</h1>
+                <div class="header-controls">
+                    <button class="role-switch-btn" onclick="toggleRoleView()" title="Cambiar modo de visualización para aula">
+                        <span>🎓 Vista:</span> <strong id="roleLabel">Estudiante</strong>
+                    </button>
+                    <span class="badge-tag">Módulo Interactivo • Gestión de Relaciones</span>
+                </div>
+            </div>
+            <p class="header-subtitle">
+                Herramienta analítica de toma de decisiones estratégicas, dilemas del mundo real y arquitectura de influencia (Potestas vs Auctoritas) basada en el informe conceptual de Liderazgo Organizacional.
+            </p>
+        </div>
+    </header>
+
+    <!-- Sticky Navigation -->
+    <nav class="sticky-nav">
+        <div class="nav-container">
+            <a href="#resumen" class="nav-link active">Resumen y KPIs</a>
+            <a href="#vuca" class="nav-link">Entorno VUCA & Casos</a>
+            <a href="#competencias" class="nav-link">5 Competencias Clave</a>
+            <a href="#paradigma" class="nav-link">Evolución & Poder vs Autoridad</a>
+            <a href="#dilemas" class="nav-link">Casos Reales & Dilemas Éticos</a>
+            <a href="#credibilidad" class="nav-link">Credibilidad & Autoevaluación</a>
+            <a href="#asistente" class="nav-link">Asistente IA / Consultas</a>
+        </div>
+    </nav>
+
+    <!-- Main Content Body -->
+    <main>
+
+        <!-- SECTION 1: RESUMEN EJECUTIVO & KPIs -->
+        <section id="resumen">
+            <div class="section-header">
+                <div class="section-title">📊 Resumen Ejecutivo y Métricas Clave</div>
+                <div class="color-legend">
+                    <div class="legend-item"><span class="dot dot-green"></span> Fortalezas / Éxito</div>
+                    <div class="legend-item"><span class="dot dot-amber"></span> Advertencias / Moderado</div>
+                    <div class="legend-item"><span class="dot dot-red"></span> Riesgos / Crítico</div>
+                    <div class="legend-item"><span class="dot dot-purple"></span> Insights / Oportunidad</div>
+                </div>
+            </div>
+
+            <div class="kpi-grid">
+                <div class="kpi-card purple">
+                    <div class="kpi-label">Dimensiones VUCA</div>
+                    <div class="kpi-value">4 Pilares</div>
+                    <div class="kpi-subtext">⚡ Volatilidad, Incertidumbre, Complejidad, Ambigüedad</div>
+                </div>
+                <div class="kpi-card green">
+                    <div class="kpi-label">Capacidades del Líder</div>
+                    <div class="kpi-value">5 Claves</div>
+                    <div class="kpi-subtext">🧠 Pensamiento Sistémico, Agilidad, Inteligencia Emocional</div>
+                </div>
+                <div class="kpi-card red">
+                    <div class="kpi-label">Alerta Financiera IA (2026)</div>
+                    <div class="kpi-value">$500 Millones</div>
+                    <div class="kpi-subtext">⚠️ Gasto accidental en 1 mes por fallo de gobernanza en Claude</div>
+                </div>
+                <div class="kpi-card amber">
+                    <div class="kpi-label">Mecanismos de Influencia</div>
+                    <div class="kpi-value">2 Ejes</div>
+                    <div class="kpi-subtext">🏛️ Potestas (Formal) vs Auctoritas (Moral)</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: ENTORNO VUCA & CASOS REALES -->
+        <section id="vuca">
+            <div class="section-header">
+                <div class="section-title">🌐 Análisis del Entorno VUCA y Evidencia del Mundo Real</div>
+            </div>
+
+            <div class="grid-2" style="margin-bottom: 1.5rem;">
+                <div class="card red">
+                    <div class="card-header-row">
+                        <div class="card-title">Volatilidad (Volatility)</div>
+                        <span class="badge-pill pill-red">Riesgo Alto</span>
+                    </div>
+                    <p><strong>Definición:</strong> Cambios rápidos e inesperados en magnitud y velocidad en un entorno impredecible.</p>
+                    <details>
+                        <summary>Ver caso ilustrativo & evidencia</summary>
+                        <div class="details-body">
+                            <strong>Ejemplo:</strong> Disrupción tecnológica repentina. <br>
+                            <strong>Evidencia Mayo 2026:</strong> Microsoft cancela licencias de Claude Code y migra miles de desarrolladores a GitHub Copilot CLI de forma acelerada (The Verge/Forbes).
+                        </div>
+                    </details>
+                    <div class="teacher-note">
+                        <strong>🍎 Nota de Facilitación / Docente:</strong> Utilice este punto para discutir la velocidad de obsolecencia tecnológica y cómo la resistencia al cambio paraliza la agilidad táctica.
+                    </div>
+                </div>
+
+                <div class="card amber">
+                    <div class="card-header-row">
+                        <div class="card-title">Incertidumbre (Uncertainty)</div>
+                        <span class="badge-pill pill-amber">Alerta Moderada</span>
+                    </div>
+                    <p><strong>Definición:</strong> Falta de previsibilidad y ausencia de información confiable para la toma de decisiones.</p>
+                    <details>
+                        <summary>Ver caso ilustrativo & evidencia</summary>
+                        <div class="details-body">
+                            <strong>Ejemplo:</strong> Crisis sanitaria COVID-19 y volatilidad de regulaciones.<br>
+                            <strong>Evidencia Empresarial:</strong> Organizaciones obligadas a operar con información parcial y modelos de negocio en constante ajuste.
+                        </div>
+                    </details>
+                    <div class="teacher-note">
+                        <strong>🍎 Nota de Facilitación / Docente:</strong> Enfatice en clase la diferencia entre "riesgo" (probabilidades conocidas) e "incertidumbre" (ausencia total de datos históricos).
+                    </div>
+                </div>
+
+                <div class="card red">
+                    <div class="card-header-row">
+                        <div class="card-title">Complejidad (Complexity)</div>
+                        <span class="badge-pill pill-red">Impacto Financiero</span>
+                    </div>
+                    <p><strong>Definición:</strong> Multiplicidad de variables interconectadas que dificultan el análisis de causa-efecto directo.</p>
+                    <details>
+                        <summary>Ver caso ilustrativo & evidencia</summary>
+                        <div class="details-body">
+                            <strong>Ejemplo Caso $500M (Polymarket - Mayo 2026):</strong> Un cliente corporativo gastó $500,000,000.00 en un solo mes tras omitir límites operativos de empleados en el uso de modelos de IA Claude. Un fallo sistémico de control y complejidad relacional.
+                        </div>
+                    </details>
+                    <div class="teacher-note">
+                        <strong>🍎 Nota de Facilitación / Docente:</strong> Analice con los alumnos el fallo de gobernanza: ¿Quién debió establecer las alertas operativas? Conecte con el concepto de Pensamiento Sistémico.
+                    </div>
+                </div>
+
+                <div class="card purple">
+                    <div class="card-header-row">
+                        <div class="card-title">Ambigüedad (Ambiguity)</div>
+                        <span class="badge-pill pill-purple">Insight Clave</span>
+                    </div>
+                    <p><strong>Definición:</strong> Falta de claridad sobre el significado exacto de los eventos y la relación de causa y efecto.</p>
+                    <details>
+                        <summary>Ver caso ilustrativo & evidencia</summary>
+                        <div class="details-body">
+                            <strong>Ejemplo:</strong> La adopción masiva de Inteligencia Artificial Generativa, donde se desconoce la reconfiguración exacta del trabajo humano a largo plazo.
+                        </div>
+                    </details>
+                    <div class="teacher-note">
+                        <strong>🍎 Nota de Facilitación / Docente:</strong> Trabaje la tolerancia a la ambigüedad como una habilidad emocional crítica del directivo moderno.
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-box">
+                <h4 style="margin-bottom: 1.25rem; color: var(--primary); font-size: 1.2rem;">Distribución de Desafíos VUCA en Toma de Decisiones</h4>
+                <svg width="100%" height="200" viewBox="0 0 520 200" style="max-width: 520px;">
+                    <rect x="30" y="30" width="85" height="120" fill="#b91c1c" rx="6"></rect>
+                    <text x="72" y="22" font-size="13" font-weight="bold" text-anchor="middle" fill="#b91c1c">Volatilidad</text>
+                    <text x="72" y="172" font-size="12" font-weight="600" text-anchor="middle" fill="#0f172a">Alto Impacto</text>
+
+                    <rect x="155" y="55" width="85" height="95" fill="#b45309" rx="6"></rect>
+                    <text x="197" y="47" font-size="13" font-weight="bold" text-anchor="middle" fill="#b45309">Incertidumbre</text>
+                    <text x="197" y="172" font-size="12" font-weight="600" text-anchor="middle" fill="#0f172a">Moderado</text>
+
+                    <rect x="280" y="20" width="85" height="130" fill="#b91c1c" rx="6"></rect>
+                    <text x="322" y="12" font-size="13" font-weight="bold" text-anchor="middle" fill="#b91c1c">Complejidad</text>
+                    <text x="322" y="172" font-size="12" font-weight="600" text-anchor="middle" fill="#0f172a">Crítico ($500M)</text>
+
+                    <rect x="405" y="65" width="85" height="85" fill="#6b21a8" rx="6"></rect>
+                    <text x="447" y="57" font-size="13" font-weight="bold" text-anchor="middle" fill="#6b21a8">Ambigüedad</text>
+                    <text x="447" y="172" font-size="12" font-weight="600" text-anchor="middle" fill="#0f172a">Estratégico</text>
+                </svg>
+            </div>
+        </section>
+
+        <!-- SECTION 3: LAS 5 COMPETENCIAS CLAVE DEL LÍDER -->
+        <section id="competencias">
+            <div class="section-header">
+                <div class="section-title">💡 Las 5 Competencias Clave en Tiempos de Complejidad</div>
+            </div>
+
+            <div class="stepper-container">
+                <div class="stepper-item">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <div class="step-title">Pensamiento Sistémico</div>
+                        <p>Capacidad de comprender las organizaciones como redes complejas e interconectadas. Identifica patrones y relaciones causales cruzadas para evitar atajar solo síntomas inmediatos.</p>
+                        <details>
+                            <summary>Reflexión Crítica & Aplicación</summary>
+                            <div class="details-body">
+                                <strong>Riesgo del líder lineal:</strong> Resolver el síntoma superficial (ej. baja productividad) empeora la causa raíz (ej. desgaste por falta de herramientas).<br>
+                                <strong>Aplicación:</strong> Conectar una baja en el compromiso del personal con la estrategia corporativa, cultura y factores externos.
+                            </div>
+                        </details>
+                    </div>
+                </div>
+
+                <div class="stepper-item">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <div class="step-title">Visión Estratégica Flexible</div>
+                        <p>Anticipar, imaginar y ajustar el rumbo constantemente como un "navegante del cambio", monitoreando señales débiles y construyendo múltiples escenarios sin perder el propósito.</p>
+                        <details>
+                            <summary>Reflexión Crítica & Aplicación</summary>
+                            <div class="details-body">
+                                <strong>Acción:</strong> Generar planes de contingencia dinámicos en lugar de aferrarse a presupuestos o visiones inflexibles.
+                            </div>
+                        </details>
+                    </div>
+                </div>
+
+                <div class="stepper-item">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <div class="step-title">Toma de Decisiones Ágil y Ética</div>
+                        <p>Actuar con velocidad asumiendo riesgos con información parcial. Empoderar la toma de decisiones distribuida para evitar cuellos de botella jerárquicos.</p>
+                        <details>
+                            <summary>Reflexión Crítica & Aplicación</summary>
+                            <div class="details-body">
+                                <strong>Advertencia:</strong> La velocidad sin ética conduce a decisiones reactivas y destructivas. Toda agilidad debe anclarse en valores y responsabilidad.
+                            </div>
+                        </details>
+                    </div>
+                </div>
+
+                <div class="stepper-item">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <div class="step-title">Inteligencia Emocional y Relacional</div>
+                        <p>Reconocer y autorregular el clima emocional colectivo (miedo, ansiedad, euforia) que amplifica la incertidumbre, creando espacios psicológicamente seguros.</p>
+                        <details>
+                            <summary>Reflexión Crítica & Aplicación</summary>
+                            <div class="details-body">
+                                <strong>Acción:</strong> Escuchar activamente, validar preocupaciones sin reactividad y regular la tensión del equipo.
+                            </div>
+                        </details>
+                    </div>
+                </div>
+
+                <div class="stepper-item">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <div class="step-title">Comunicación Clara y Desaprendizaje</div>
+                        <p>Expresar el 'por qué' de los cambios reduciendo la sobrecarga informativa, junto con la humildad cognitiva para soltar marcos mentales y hábitos obsoletos.</p>
+                        <details>
+                            <summary>Reflexión Crítica & Aplicación</summary>
+                            <div class="details-body">
+                                <strong>Mayor amenaza:</strong> El apego a "lo que antes funcionaba". Desaprender implica revisar dogmas culturales y tolerar el error en la experimentación.
+                            </div>
+                        </details>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: EVOLUCIÓN DEL PARADIGMA Y ARQUITECTURA DEL PODER -->
+        <section id="paradigma">
+            <div class="section-header">
+                <div class="section-title">🏛️ Evolución del Liderazgo y Arquitectura: Potestas vs Auctoritas</div>
+            </div>
+
+            <div class="responsive-table" style="margin-bottom: 1.75rem;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Eje de Análisis</th>
+                            <th>Enfoque Tradicional (Mando Jerárquico)</th>
+                            <th>Nuevo Paradigma (Proceso Social)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td data-label="Eje de Análisis"><strong>Foco Principal</strong></td>
+                            <td data-label="Tradicional">Centrado en el líder individual y sus rasgos.</td>
+                            <td data-label="Nuevo Paradigma">Centrado en las interacciones y dinámicas de red.</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Eje de Análisis"><strong>Estructura</strong></td>
+                            <td data-label="Tradicional">Modelo jerárquico vertical de mando y control.</td>
+                            <td data-label="Nuevo Paradigma">Modelo horizontal de influencia mutua.</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Eje de Análisis"><strong>Origen del Liderazgo</strong></td>
+                            <td data-label="Tradicional">Atributo concedido por cargo, título o carisma.</td>
+                            <td data-label="Nuevo Paradigma">Emerge socialmente para alcanzar objetivos compartidos.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="responsive-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Dimensión</th>
+                            <th>POTESTAS (Poder Formal)</th>
+                            <th>AUCTORITAS (Autoridad Moral)</th>
+                            <th>Calibración Situacional</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td data-label="Dimensión"><strong>Naturaleza</strong></td>
+                            <td data-label="POTESTAS"><span class="badge-pill pill-amber">Coercitivo / Normativo</span></td>
+                            <td data-label="AUCTORITAS"><span class="badge-pill pill-green">Persuasivo / Reputacional</span></td>
+                            <td data-label="Calibración">Equilibrio entre estructura e inspiración.</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Dimensión"><strong>Base de Sustento</strong></td>
+                            <td data-label="POTESTAS">Leyes, cargos, recompensas y sanciones.</td>
+                            <td data-label="AUCTORITAS">Respeto, sabiduría, congruencia y ejemplo.</td>
+                            <td data-label="Calibración">Usar Potestas en crisis; Auctoritas para lealtad.</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Dimensión"><strong>Tipos de Poder (French & Raven)</strong></td>
+                            <td data-label="POTESTAS">Legítimo, Coercitivo, Recompensa.</td>
+                            <td data-label="AUCTORITAS">Poder Experto, Poder Referente.</td>
+                            <td data-label="Calibración">El experto y referente logran autonomía.</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Dimensión"><strong>Momento de Uso Recomendado</strong></td>
+                            <td data-label="POTESTAS">Crisis urgentes, cumplimiento estricto, orden legal.</td>
+                            <td data-label="AUCTORITAS">Inspirar innovación, equipos autónomos de alto rendimiento.</td>
+                            <td data-label="Calibración">Evitar abrumar con Potestas para no destruir la confianza.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SECTION 5: CASOS DEL MUNDO REAL Y DILEMAS ÉTICOS -->
+        <section id="dilemas">
+            <div class="section-header">
+                <div class="section-title">🔍 Casos del Mundo Real & Dilemas Éticos en Aula</div>
+            </div>
+
+            <div class="card purple" style="margin-bottom: 1.75rem;">
+                <div class="card-header-row">
+                    <div class="card-title">🎮 Simulador de Decisiones Directivas (Toma de Posición en 2ª Persona)</div>
+                    <span class="badge-pill pill-purple">Caso Ágil Dilemático</span>
+                </div>
+                <p><strong>Situación:</strong> Estás liderando la implementación de un bot de Inteligencia Artificial para atención al cliente. Tu equipo de analistas junior identifica una vulnerabilidad grave en la privacidad de datos. El Director Comercial te presiona diciendo: <em>"No detengas el lanzamiento por temores infundados; ajustamos en el camino"</em>. ¿Qué decisión tomas?</p>
+                
+                <div style="margin-top: 1.25rem;">
+                    <button class="sim-option" onclick="evaluarSimulacion(1)">
+                        👉 <strong>Opción A (Uso de Potestas Comercial):</strong> Acatas la presión directiva y autorizas el lanzamiento a tiempo para no alterar el cronograma.
+                    </button>
+                    <button class="sim-option" onclick="evaluarSimulacion(2)">
+                        👉 <strong>Opción B (Sostenimiento de Auctoritas & Ética):</strong> Detienes el despliegue, proteges la seguridad psicológica del junior y convocas una sesión con la Junta para analizar el riesgo sistémico.
+                    </button>
+                    <button class="sim-option" onclick="evaluarSimulacion(3)">
+                        👉 <strong>Opción C (Delegación Ambigua):</strong> Pides al analista junior que intente parchear el problema en secreto durante el fin de semana sin notificar al Comité.
+                    </button>
+                </div>
+
+                <div id="simFeedback" class="sim-feedback"></div>
+            </div>
+
+            <div class="filter-controls">
+                <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar por palabra clave (ej. silencio, datos, crisis, reestructuración)..." onkeyup="filterCards()">
+                <button class="filter-btn active" onclick="setFilter('all', this)">Todos</button>
+                <button class="filter-btn" onclick="setFilter('fallo', this)">Fallos de Liderazgo</button>
+                <button class="filter-btn" onclick="setFilter('dilema', this)">Dilemas Éticos</button>
+            </div>
+
+            <div class="grid-2" id="cardsGrid">
+
+                <div class="card red item-card" data-category="fallo" data-keywords="director interrumpe experiencia junior silencio participacion">
+                    <div class="card-header-row">
+                        <div class="card-title">Interrupción y Silenciamiento Jerárquico</div>
+                        <span class="badge-pill pill-red">Fallo de Potestas/Auctoritas</span>
+                    </div>
+                    <p><strong>Situación:</strong> El director interrumpe en reuniones a analistas junior: <em>"Cuando tengas mi experiencia, opinarás"</em>.</p>
+                    <p><strong>Impacto:</strong> Silencio defensivo, pérdida de participación y fuga de ideas innovadoras.</p>
+                    <details>
+                        <summary>Acción Correctora & Pregunta de Reflexión</summary>
+                        <div class="details-body">
+                            <strong>Acción:</strong> Reconocer públicamente el valor de contribuciones y practicar escucha activa.<br>
+                            <strong>Pregunta en Aula:</strong> ¿Cómo impacta la descalificación explícita en la seguridad psicológica del equipo?
+                        </div>
+                    </details>
+                    <div class="teacher-note">
+                        <strong>🍎 Nota de Facilitación:</strong> Enlace con el concepto de Amy Edmondson sobre Seguridad Psicológica.
+                    </div>
+                </div>
+
+                <div class="card red item-card" data-category="fallo" data-keywords="culpa equipo junta directiva fracaso auctoritas confianza">
+                    <div class="card-header-row">
+                        <div class="card-title">Transferencia de Culpa ante el Fracaso</div>
+                        <span class="badge-pill pill-red">Fallo de Auctoritas</span>
+                    </div>
+                    <p><strong>Situación:</strong> Tras fallar un proyecto, el líder culpa al equipo técnico ante la Junta Directiva afirmando falta de comprensión.</p>
+                    <p><strong>Impacto:</strong> Cultura defensiva, miedo paralizante al error y quiebre de confianza.</p>
+                    <details>
+                        <summary>Acción Correctora & Pregunta de Reflexión</summary>
+                        <div class="details-body">
+                            <strong>Acción:</strong> Admitir responsabilidad propia, analizar causas sistémicas y promover aprendizaje colectivo.<br>
+                            <strong>Pregunta en Aula:</strong> ¿Por qué asumir la responsabilidad consolida la Auctoritas en lugar de debilitarla?
+                        </div>
+                    </details>
+                </div>
+
+                <div class="card red item-card" data-category="fallo" data-keywords="ventas caen negacion mala racha silenciar datos reales">
+                    <div class="card-header-row">
+                        <div class="card-title">Negación de la Realidad y Cifras Negativas</div>
+                        <span class="badge-pill pill-red">Fallo de Potestas y Auctoritas</span>
+                    </div>
+                    <p><strong>Situación:</strong> Caída de ventas del 20% mensual, pero el líder lo califica de "mala racha" y prohíbe hablar de cifras malas.</p>
+                    <p><strong>Impacto:</strong> Negación organizacional, desconexión con el mercado y pérdida de capacidad de respuesta.</p>
+                    <details>
+                        <summary>Acción Correctora & Pregunta de Reflexión</summary>
+                        <div class="details-body">
+                            <strong>Acción:</strong> Instalar espacios de análisis objetivo con datos transparentes.<br>
+                            <strong>Pregunta en Aula:</strong> ¿Dónde termina la motivación optimista y empieza la ceguera organizacional?
+                        </div>
+                    </details>
+                </div>
+
+                <div class="card red item-card" data-category="fallo" data-keywords="reestructuracion opacidad confidencialidad rumores ansiedad">
+                    <div class="card-header-row">
+                        <div class="card-title">Opacidad en Reestructuraciones</div>
+                        <span class="badge-pill pill-red">Fallo de Potestas</span>
+                    </div>
+                    <p><strong>Situación:</strong> Reestructuración masiva sin explicar criterios, escudándose en "confidencialidad".</p>
+                    <p><strong>Impacto:</strong> Rumores descontrolados, ansiedad generalizada y fuga de talento clave.</p>
+                    <details>
+                        <summary>Acción Correctora & Pregunta de Reflexión</summary>
+                        <div class="details-body">
+                            <strong>Acción:</strong> Explicar criterios, procesos y límites de información con claridad y empatía.<br>
+                            <strong>Pregunta en Aula:</strong> ¿Cómo gestionar la confidencialidad legal sin caer en opacidad arbitraria?
+                        </div>
+                    </details>
+                </div>
+
+                <div class="card purple item-card" data-category="dilema" data-keywords="presentacion indicadores sesgados storytelling manipulacion datos">
+                    <div class="card-header-row">
+                        <div class="card-title">Dilema 1: Storytelling vs Manipulación de Datos</div>
+                        <span class="badge-pill pill-purple">Fuente de Auctoritas</span>
+                    </div>
+                    <p><strong>Dilema:</strong> Sugerencia de presentar indicadores maquillando solo el aspecto optimista. ¿Acceder o exigir equilibrio?</p>
+                    <details>
+                        <summary>Debate Pedagógico & Discusión</summary>
+                        <div class="details-body">
+                            <strong>Competencia en prueba:</strong> Integridad bajo presión.<br>
+                            <strong>Pregunta Clave:</strong> En una cultura data-driven, ¿dónde termina el storytelling estratégico y empieza la manipulación engañosa?
+                        </div>
+                    </details>
+                </div>
+
+                <div class="card purple item-card" data-category="dilema" data-keywords="disenso unanimidad riesgo pensamiento de grupo bloqueo">
+                    <div class="card-header-row">
+                        <div class="card-title">Dilema 2: Disenso Constructivo vs Bloqueo</div>
+                        <span class="badge-pill pill-purple">Fuente de Auctoritas</span>
+                    </div>
+                    <p><strong>Dilema:</strong> El equipo concuerda en una decisión riesgosa. Analista identifica fallos. ¿Callar o disentir?</p>
+                    <details>
+                        <summary>Debate Pedagógico & Discusión</summary>
+                        <div class="details-body">
+                            <strong>Competencia en prueba:</strong> Independencia de criterio.<br>
+                            <strong>Pregunta Clave:</strong> En células ágiles, ¿cómo diferenciar metodológicamente el disenso constructivo del bloqueo operativo?
+                        </div>
+                    </details>
+                </div>
+
+                <div class="card purple item-card" data-category="dilema" data-keywords="amigo incumplimiento lealtad complicidad burnout remoto">
+                    <div class="card-header-row">
+                        <div class="card-title">Dilema 3: Lealtad Personal vs Complicidad</div>
+                        <span class="badge-pill pill-purple">Fuente de Auctoritas</span>
+                    </div>
+                    <p><strong>Dilema:</strong> Amigo cercano incumple funciones clave en remoto. Reportarlo daña la amistad; callar sobrecarga al resto.</p>
+                    <details>
+                        <summary>Debate Pedagógico & Discusión</summary>
+                        <div class="details-body">
+                            <strong>Competencia en prueba:</strong> Integridad relacional.<br>
+                            <strong>Pregunta Clave:</strong> Proteger a un colega a costa del burnout del equipo, ¿es lealtad o complicidad antiética?
+                        </div>
+                    </details>
+                </div>
+
+                <div class="card purple item-card" data-category="dilema" data-keywords="rumores confidencialidad informacion sensible prudencia">
+                    <div class="card-header-row">
+                        <div class="card-title">Dilema 4: Manejo de Información Sensible</div>
+                        <span class="badge-pill pill-purple">Fuente de Auctoritas</span>
+                    </div>
+                    <p><strong>Dilema:</strong> Conocer una reestructuración confidencial. Colegas preguntan directamente. ¿Guardar reserva o filtrar?</p>
+                    <details>
+                        <summary>Debate Pedagógico & Discusión</summary>
+                        <div class="details-body">
+                            <strong>Competencia en prueba:</strong> Prudencia y confiabilidad.<br>
+                            <strong>Pregunta Clave:</strong> ¿Cómo responder a los pares sin mentir y manteniendo la ética del secreto profesional?
+                        </div>
+                    </details>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION 6: CREDIBILIDAD & MATRIZ DE AUTOEVALUACIÓN LIKERT -->
+        <section id="credibilidad">
+            <div class="section-header">
+                <div class="section-title">✅ Ecuación de la Credibilidad & Matriz de Autoevaluación</div>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <button class="btn-action" onclick="exportarProgresoJSON()">📥 Exportar JSON</button>
+                    <button class="btn-action secondary" onclick="reiniciarMatriz()">🔄 Reiniciar</button>
+                </div>
+            </div>
+
+            <div class="card green" style="margin-bottom: 1.5rem;">
+                <p><strong>La Ecuación de la Credibilidad:</strong> El liderazgo es un proceso de influencia sostenido por la credibilidad. La credibilidad se construye mediante la coherencia tripartita entre <strong>PENSAR = DECIR = HACER</strong> a lo largo del tiempo, sustentada en Integridad, Motivaciones transparentes, Aptitudes y Resultados provenientes del rendimiento constante.</p>
+            </div>
+
+            <div class="matrix-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 1rem;">
+                    <div>
+                        <h3 style="color: var(--primary); font-size: 1.3rem;">Matriz de Coherencia Directiva (Escala Likert)</h3>
+                        <p style="font-size: 0.95rem; color: var(--text-muted);">Califique la frecuencia real de adopción de cada comportamiento (1: Nunca/Rara vez ... 5: Siempre/Consistencia Total)</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <span id="scoreText" style="font-weight: 800; color: var(--primary); font-size: 1.2rem;">Score: 0.0 / 5.0</span>
+                        <br>
+                        <span id="indexText" style="font-weight: 700; color: var(--green); font-size: 1rem;">Índice de Credibilidad: 0%</span>
+                    </div>
+                </div>
+
+                <div id="likertGroup">
+                    <!-- Item 1 -->
+                    <div class="likert-item" data-id="1">
+                        <div class="likert-text"><strong>1. Demuestra Respeto:</strong> Valora activamente a las personas independientemente de su jerarquía o posición organizativa.</div>
+                        <div class="likert-options">
+                            <button class="likert-btn" onclick="selectLikert(1, 1)">1 - Nunca</button>
+                            <button class="likert-btn" onclick="selectLikert(1, 2)">2 - Rara vez</button>
+                            <button class="likert-btn" onclick="selectLikert(1, 3)">3 - A veces</button>
+                            <button class="likert-btn" onclick="selectLikert(1, 4)">4 - Casi siempre</button>
+                            <button class="likert-btn" onclick="selectLikert(1, 5)">5 - Siempre</button>
+                        </div>
+                    </div>
+                    <!-- Item 2 -->
+                    <div class="likert-item" data-id="2">
+                        <div class="likert-text"><strong>2. Sostiene el Compromiso:</strong> Cumple con exactitud los acuerdos y promesas establecidas con su equipo e interlocutores.</div>
+                        <div class="likert-options">
+                            <button class="likert-btn" onclick="selectLikert(2, 1)">1 - Nunca</button>
+                            <button class="likert-btn" onclick="selectLikert(2, 2)">2 - Rara vez</button>
+                            <button class="likert-btn" onclick="selectLikert(2, 3)">3 - A veces</button>
+                            <button class="likert-btn" onclick="selectLikert(2, 4)">4 - Casi siempre</button>
+                            <button class="likert-btn" onclick="selectLikert(2, 5)">5 - Siempre</button>
+                        </div>
+                    </div>
+                    <!-- Item 3 -->
+                    <div class="likert-item" data-id="3">
+                        <div class="likert-text"><strong>3. Asume Responsabilidad:</strong> Se hace cargo de los resultados y fallos propios ante la alta dirección antes de responsabilizar al equipo.</div>
+                        <div class="likert-options">
+                            <button class="likert-btn" onclick="selectLikert(3, 1)">1 - Nunca</button>
+                            <button class="likert-btn" onclick="selectLikert(3, 2)">2 - Rara vez</button>
+                            <button class="likert-btn" onclick="selectLikert(3, 3)">3 - A veces</button>
+                            <button class="likert-btn" onclick="selectLikert(3, 4)">4 - Casi siempre</button>
+                            <button class="likert-btn" onclick="selectLikert(3, 5)">5 - Siempre</button>
+                        </div>
+                    </div>
+                    <!-- Item 4 -->
+                    <div class="likert-item" data-id="4">
+                        <div class="likert-text"><strong>4. Confronta la Realidad:</strong> Aborda abiertamente los problemas difíciles, tensiones e indicadores negativos con objetividad y valentía.</div>
+                        <div class="likert-options">
+                            <button class="likert-btn" onclick="selectLikert(4, 1)">1 - Nunca</button>
+                            <button class="likert-btn" onclick="selectLikert(4, 2)">2 - Rara vez</button>
+                            <button class="likert-btn" onclick="selectLikert(4, 3)">3 - A veces</button>
+                            <button class="likert-btn" onclick="selectLikert(4, 4)">4 - Casi siempre</button>
+                            <button class="likert-btn" onclick="selectLikert(4, 5)">5 - Siempre</button>
+                        </div>
+                    </div>
+                    <!-- Item 5 -->
+                    <div class="likert-item" data-id="5">
+                        <div class="likert-text"><strong>5. Enmienda Errores:</strong> Ofrece disculpas auténticas y repara activamente el daño causado por decisiones equivocadas.</div>
+                        <div class="likert-options">
+                            <button class="likert-btn" onclick="selectLikert(5, 1)">1 - Nunca</button>
+                            <button class="likert-btn" onclick="selectLikert(5, 2)">2 - Rara vez</button>
+                            <button class="likert-btn" onclick="selectLikert(5, 3)">3 - A veces</button>
+                            <button class="likert-btn" onclick="selectLikert(5, 4)">4 - Casi siempre</button>
+                            <button class="likert-btn" onclick="selectLikert(5, 5)">5 - Siempre</button>
+                        </div>
+                    </div>
+                    <!-- Item 6 -->
+                    <div class="likert-item" data-id="6">
+                        <div class="likert-text"><strong>6. Practica la Transparencia:</strong> Explica el trasfondo, criterios y dilemas éticos detrás de las decisiones estratégicas.</div>
+                        <div class="likert-options">
+                            <button class="likert-btn" onclick="selectLikert(6, 1)">1 - Nunca</button>
+                            <button class="likert-btn" onclick="selectLikert(6, 2)">2 - Rara vez</button>
+                            <button class="likert-btn" onclick="selectLikert(6, 3)">3 - A veces</button>
+                            <button class="likert-btn" onclick="selectLikert(6, 4)">4 - Casi siempre</button>
+                            <button class="likert-btn" onclick="selectLikert(6, 5)">5 - Siempre</button>
+                        </div>
+                    </div>
+                    <!-- Item 7 -->
+                    <div class="likert-item" data-id="7">
+                        <div class="likert-text"><strong>7. Aclara Expectativas:</strong> Define de forma explícita y transparente los roles, objetivos y límites operativos antes de ejecutar.</div>
+                        <div class="likert-options">
+                            <button class="likert-btn" onclick="selectLikert(7, 1)">1 - Nunca</button>
+                            <button class="likert-btn" onclick="selectLikert(7, 2)">2 - Rara vez</button>
+                            <button class="likert-btn" onclick="selectLikert(7, 3)">3 - A veces</button>
+                            <button class="likert-btn" onclick="selectLikert(7, 4)">4 - Casi siempre</button>
+                            <button class="likert-btn" onclick="selectLikert(7, 5)">5 - Siempre</button>
+                        </div>
+                    </div>
+                    <!-- Item 8 -->
+                    <div class="likert-item" data-id="8">
+                        <div class="likert-text"><strong>8. Demuestra Lealtad:</strong> Otorga reconocimiento público al trabajo del equipo y los defiende frente a presiones externas injustas.</div>
+                        <div class="likert-options">
+                            <button class="likert-btn" onclick="selectLikert(8, 1)">1 - Nunca</button>
+                            <button class="likert-btn" onclick="selectLikert(8, 2)">2 - Rara vez</button>
+                            <button class="likert-btn" onclick="selectLikert(8, 3)">3 - A veces</button>
+                            <button class="likert-btn" onclick="selectLikert(8, 4)">4 - Casi siempre</button>
+                            <button class="likert-btn" onclick="selectLikert(8, 5)">5 - Siempre</button>
+                        </div>
+                    </div>
+                    <!-- Item 9 -->
+                    <div class="likert-item" data-id="9">
+                        <div class="likert-text"><strong>9. Escucha Activamente:</strong> Procesa el punto de vista y preocupaciones del interlocutor antes de emitir un juicio o tomar postura.</div>
+                        <div class="likert-options">
+                            <button class="likert-btn" onclick="selectLikert(9, 1)">1 - Nunca</button>
+                            <button class="likert-btn" onclick="selectLikert(9, 2)">2 - Rara vez</button>
+                            <button class="likert-btn" onclick="selectLikert(9, 3)">3 - A veces</button>
+                            <button class="likert-btn" onclick="selectLikert(9, 4)">4 - Casi siempre</button>
+                            <button class="likert-btn" onclick="selectLikert(9, 5)">5 - Siempre</button>
+                        </div>
+                    </div>
+                    <!-- Item 10 -->
+                    <div class="likert-item" data-id="10">
+                        <div class="likert-text"><strong>10. Obtiene Resultados Coherentes:</strong> Cumple con las metas de negocio garantizando procesos éticos, respetuosos y sostenibles.</div>
+                        <div class="likert-options">
+                            <button class="likert-btn" onclick="selectLikert(10, 1)">1 - Nunca</button>
+                            <button class="likert-btn" onclick="selectLikert(10, 2)">2 - Rara vez</button>
+                            <button class="likert-btn" onclick="selectLikert(10, 3)">3 - A veces</button>
+                            <button class="likert-btn" onclick="selectLikert(10, 4)">4 - Casi siempre</button>
+                            <button class="likert-btn" onclick="selectLikert(10, 5)">5 - Siempre</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="diagnosisBox" class="diagnosis-box">
+                    <em>Complete la evaluación seleccionando un valor para cada comportamiento para generar el diagnóstico situacional de credibilidad.</em>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 7: ASISTENTE DE CONSULTAS / FAQ INTERACTIVO -->
+        <section id="asistente">
+            <div class="section-header">
+                <div class="section-title">💬 Asistente de Consultas Pedagógicas & Marco Teórico</div>
+            </div>
+
+            <div class="qa-container">
+                <div class="qa-toggle-row">
+                    <span><strong>Modo de Consulta:</strong> Base Local Embebida (Gratuito)</span>
+                    <label class="switch-label">
+                        <input type="checkbox" id="aiToggle" onchange="toggleAiMode()"> Activar Conexión IA Externa (API Key)
+                    </label>
+                </div>
+
+                <div id="aiKeyBox" class="ai-key-box">
+                    <strong>⚠️ Advertencia de Seguridad:</strong> La clave de API ingresada vivirá únicamente en la memoria de su sesión de navegador y nunca será guardada en disco ni enviada a servidores de terceros.
+                    <input type="password" id="apiKeyInput" placeholder="sk-ant-api...">
+                </div>
+
+                <div style="display: flex; gap: 0.75rem; margin-bottom: 1rem;">
+                    <input type="text" id="userQuery" class="search-input" placeholder="Escribe una consulta sobre VUCA, Potestas, Auctoritas o Sun Tzu..." onkeypress="handleKeyPress(event)">
+                    <button class="filter-btn active" onclick="executeQuery()">Consultar</button>
+                </div>
+
+                <div id="qaResponse" class="qa-response-box">
+                    <em>Haz una pregunta o selecciona uno de los temas conceptuales para recibir una respuesta resumida basada en el marco teórico del informe.</em>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- JavaScript Logic -->
+    <script>
+        let currentFilter = 'all';
+
+        function setFilter(category, btnElement) {
+            currentFilter = category;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+            filterCards();
+        }
+
+        function filterCards() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.item-card');
+
+            cards.forEach(card => {
+                const category = card.getAttribute('data-category');
+                const keywords = card.getAttribute('data-keywords').toLowerCase();
+                const cardText = card.innerText.toLowerCase();
+
+                const matchesCategory = (currentFilter === 'all' || category === currentFilter);
+                const matchesSearch = (query === '' || keywords.includes(query) || cardText.includes(query));
+
+                if (matchesCategory && matchesSearch) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function evaluarSimulacion(opcion) {
+            const feedback = document.getElementById('simFeedback');
+            feedback.style.display = 'block';
+
+            if (opcion === 1) {
+                feedback.style.backgroundColor = 'var(--red-bg)';
+                feedback.style.color = 'var(--red)';
+                feedback.style.border = '1.5px solid var(--red)';
+                feedback.innerHTML = '<strong>❌ Fallo Crítico de Auctoritas:</strong> Subordinar la ética técnica al cronograma comercial destruye la seguridad psicológica, valida la opacidad e incrementa exponencialmente el riesgo de catástrofe financiera o reputacional.';
+            } else if (opcion === 2) {
+                feedback.style.backgroundColor = 'var(--green-bg)';
+                feedback.style.color = 'var(--green)';
+                feedback.style.border = '1.5px solid var(--green)';
+                feedback.innerHTML = '<strong>✅ Decision Óptima (Pensamiento Sistémico & Auctoritas):</strong> Priorizas la responsabilidad y la credibilidad a largo plazo sobre la presión cortoplacista. Esto consolida tu liderazgo de referencia y construye una cultura de alta confianza.';
+            } else {
+                feedback.style.backgroundColor = 'var(--amber-bg)';
+                feedback.style.color = 'var(--amber)';
+                feedback.style.border = '1.5px solid var(--amber)';
+                feedback.innerHTML = '<strong>⚠️ Riesgo de Complicidad y Sobre-presión:</strong> Trasladar la carga ética de forma encubierta al colaborador junior genera burnout, incrementa la opacidad relacional y evade la responsabilidad colectiva del líder.';
+            }
+        }
+
+        let currentRole = 'estudiante';
+
+        function toggleRoleView() {
+            const roleLabel = document.getElementById('roleLabel');
+            const teacherNotes = document.querySelectorAll('.teacher-note');
+
+            if (currentRole === 'estudiante') {
+                currentRole = 'docente';
+                roleLabel.innerText = 'Docente / Facilitador';
+                teacherNotes.forEach(note => note.style.display = 'block');
+            } else {
+                currentRole = 'estudiante';
+                roleLabel.innerText = 'Estudiante';
+                teacherNotes.forEach(note => note.style.display = 'none');
+            }
+        }
+
+        // Likert Matrix Logic & State Management
+        let likertScores = {};
+
+        function selectLikert(itemId, val) {
+            likertScores[itemId] = val;
+            localStorage.setItem('liderazgo_likert_' + itemId, val);
+
+            const itemElem = document.querySelector(`.likert-item[data-id="${itemId}"]`);
+            if (itemElem) {
+                const btns = itemElem.querySelectorAll('.likert-btn');
+                btns.forEach((btn, index) => {
+                    if (index + 1 === val) {
+                        btn.classList.add('selected');
+                    } else {
+                        btn.classList.remove('selected');
+                    }
+                });
+            }
+
+            calculateMatrixScore();
+        }
+
+        function calculateMatrixScore() {
+            const totalItems = 10;
+            const keys = Object.keys(likertScores);
+            
+            if (keys.length === 0) return;
+
+            let sum = 0;
+            keys.forEach(k => sum += likertScores[k]);
+
+            const average = (sum / keys.length).toFixed(1);
+            const maxPossible = keys.length * 5;
+            const percentage = Math.round((sum / maxPossible) * 100);
+
+            document.getElementById('scoreText').innerText = `Score: ${average} / 5.0`;
+            document.getElementById('indexText').innerText = `Índice de Credibilidad: ${percentage}%`;
+
+            const diagBox = document.getElementById('diagnosisBox');
+
+            if (keys.length < totalItems) {
+                diagBox.innerHTML = `<em>Avance de evaluación: ${keys.length} de ${totalItems} comportamientos completados. Complete la matriz para el diagnóstico integral.</em>`;
+                return;
+            }
+
+            if (percentage >= 85) {
+                diagBox.style.backgroundColor = 'var(--green-bg)';
+                diagBox.style.border = '1.5px solid var(--green)';
+                diagBox.style.color = 'var(--green)';
+                diagBox.innerHTML = `<strong>🏆 Diagnóstico: Consolidación de Auctoritas (${percentage}%)</strong><br>Demuestra un nivel sobresaliente de coherencia (Pensar = Decir = Hacer). Su liderazgo se fundamenta en la autoridad moral, generando alta confianza y seguridad psicológica en sus equipos.`;
+            } else if (percentage >= 60) {
+                diagBox.style.backgroundColor = 'var(--amber-bg)';
+                diagBox.style.border = '1.5px solid var(--amber)';
+                diagBox.style.color = 'var(--amber)';
+                diagBox.innerHTML = `<strong>⚠️ Diagnóstico: Inconsistencia Táctica / Riesgo Relacional (${percentage}%)</strong><br>Presenta fortalezas conceptuales pero con brechas de ejecución intermitentes. Existen inconsistencias ocasionales entre lo que predica y lo que ejecuta bajo presión.`;
+            } else {
+                diagBox.style.backgroundColor = 'var(--red-bg)';
+                diagBox.style.border = '1.5px solid var(--red)';
+                diagBox.style.color = 'var(--red)';
+                diagBox.innerHTML = `<strong>🚨 Diagnóstico: Incoherencia Crítica / Carencia de Credibilidad (${percentage}%)</strong><br>Frecuencia insuficiente en la adopción de comportamientos éticos clave. Dependencia excesiva del mando formal (Potestas), lo que deteriora la lealtad y paraliza la iniciativa del equipo.`;
+            }
+        }
+
+        function loadMatrixState() {
+            for (let i = 1; i <= 10; i++) {
+                const saved = localStorage.getItem('liderazgo_likert_' + i);
+                if (saved) {
+                    selectLikert(i, parseInt(saved));
+                }
+            }
+        }
+
+        function exportarProgresoJSON() {
+            const blob = new Blob([JSON.stringify(likertScores, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'matriz_autoevaluacion_liderazgo.json';
+            a.click();
+        }
+
+        function reiniciarMatriz() {
+            if (confirm('¿Desea reiniciar su matriz de autoevaluación?')) {
+                for (let i = 1; i <= 10; i++) {
+                    localStorage.removeItem('liderazgo_likert_' + i);
+                    const itemElem = document.querySelector(`.likert-item[data-id="${i}"]`);
+                    if (itemElem) {
+                        itemElem.querySelectorAll('.likert-btn').forEach(btn => btn.classList.remove('selected'));
+                    }
+                }
+                likertScores = {};
+                document.getElementById('scoreText').innerText = 'Score: 0.0 / 5.0';
+                document.getElementById('indexText').innerText = 'Índice de Credibilidad: 0%';
+                document.getElementById('diagnosisBox').innerHTML = '<em>Matriz reiniciada. Seleccione los valores para iniciar un nuevo diagnóstico.</em>';
+                document.getElementById('diagnosisBox').style.background = '#f8fafc';
+                document.getElementById('diagnosisBox').style.border = '1.5px solid var(--border-color)';
+                document.getElementById('diagnosisBox').style.color = 'var(--text-main)';
+            }
+        }
+
+        function toggleAiMode() {
+            const isChecked = document.getElementById('aiToggle').checked;
+            const keyBox = document.getElementById('aiKeyBox');
+            keyBox.style.display = isChecked ? 'block' : 'none';
+        }
+
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') {
+                executeQuery();
+            }
+        }
+
+        const localKnowledge = [
+            {
+                keywords: ['vuca', 'volatilidad', 'incertidumbre', 'complejidad', 'ambigüedad'],
+                response: '<strong>Marco VUCA:</strong> Representa un entorno caracterizado por Volatilidad (cambios veloces), Incertidumbre (ausencia de certeza), Complejidad (variables interconectadas) y Ambigüedad (falta de claridad causa-efecto). El líder requiere agilidad, pensamiento sistémico e inteligencia emocional.'
+            },
+            {
+                keywords: ['potestas', 'poder', 'formal', 'coercitivo'],
+                response: '<strong>Potestas:</strong> Es el poder formal y legítimo asignado por una institución o cargo. Funciona mediante normas, sanciones e incentivos coercitivos. Es necesario para resolver crisis existenciales e imponer orden legal.'
+            },
+            {
+                keywords: ['auctoritas', 'autoridad', 'moral', 'prestigio', 'respeto'],
+                response: '<strong>Auctoritas:</strong> Es la autoridad moral sustentada en el prestigio, la sabiduría, la congruencia y el ejemplo. Opera mediante la persuasión no coercitiva para generar lealtad de largo plazo e innovación.'
+            },
+            {
+                keywords: ['sun tzu', 'arte de la guerra', 'virtudes'],
+                response: '<strong>Enfoque Sun Tzu:</strong> El éxito organizacional requiere unidad de propósito, conocimiento profundo del entorno y un liderazgo virtuoso basado en 5 pilares: Integridad, Coraje, Benevolencia, Disciplina y Sabiduría.'
+            },
+            {
+                keywords: ['credibilidad', 'coherencia', 'pensar', 'decir', 'hacer'],
+                response: '<strong>La Credibilidad:</strong> Es la base de la influencia duradera. Requiere alineación total entre Pensar, Decir y Hacer, respaldada por resultados consistentes e integridad moral.'
+            },
+            {
+                keywords: ['500', 'claude', 'microsoft', 'ia', 'gastos', 'polymarket'],
+                response: '<strong>Caso IA 2026:</strong> Ejemplifica el riesgo de la Complejidad VUCA y la falta de gobernanza. Un cliente gastó $500M por no establecer límites operativos en el uso de empleados, mientras Microsoft migró masivamente desarrolladores a Copilot.'
+            }
+        ];
+
+        function executeQuery() {
+            const query = document.getElementById('userQuery').value.toLowerCase().trim();
+            const responseBox = document.getElementById('qaResponse');
+            const isAiActive = document.getElementById('aiToggle').checked;
+
+            if (!query) {
+                responseBox.innerHTML = '<em>Por favor, ingresa una pregunta o concepto clave.</em>';
+                return;
+            }
+
+            if (isAiActive) {
+                const apiKey = document.getElementById('apiKeyInput').value;
+                if (!apiKey) {
+                    responseBox.innerHTML = '<span style="color:var(--red);">⚠️ Error: Ingrese su API Key de Anthropic para habilitar el modo IA externo.</span>';
+                    return;
+                }
+                responseBox.innerHTML = '⏳ <em>Conectando con la API externa para procesar la consulta... (Simulado para entorno local)</em>';
+                return;
+            }
+
+            let matched = false;
+            for (let item of localKnowledge) {
+                if (item.keywords.some(kw => query.includes(kw))) {
+                    responseBox.innerHTML = item.response;
+                    matched = true;
+                    break;
+                }
+            }
+
+            if (!matched) {
+                responseBox.innerHTML = '<strong>Síntesis General:</strong> La consulta toca aspectos de la dinámica relacional. En entornos convulsos, recuerde equilibrar el uso de la Potestas (mando formal) con la Auctoritas (ejemplo ético) para preservar la seguridad psicológica del equipo.';
+            }
+        }
+
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-link');
+            let current = '';
+
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                if (pageYOffset >= sectionTop) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        window.onload = function() {
+            loadMatrixState();
+        };
+    </script>
+</body>
+</html>
